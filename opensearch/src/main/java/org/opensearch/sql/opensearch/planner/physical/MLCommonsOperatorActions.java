@@ -24,7 +24,9 @@ import org.opensearch.ml.common.dataframe.Row;
 import org.opensearch.ml.common.dataset.DataFrameInputDataset;
 import org.opensearch.ml.common.input.MLInput;
 import org.opensearch.ml.common.input.parameter.MLAlgoParams;
+import org.opensearch.ml.common.output.MLOutput;
 import org.opensearch.ml.common.output.MLPredictionOutput;
+import org.opensearch.ml.common.output.MLTrainingOutput;
 import org.opensearch.sql.data.model.ExprBooleanValue;
 import org.opensearch.sql.data.model.ExprDoubleValue;
 import org.opensearch.sql.data.model.ExprFloatValue;
@@ -186,6 +188,59 @@ public abstract class MLCommonsOperatorActions extends PhysicalPlan {
     return (MLPredictionOutput) machineLearningClient
             .trainAndPredict(mlinput)
             .actionGet(30, TimeUnit.SECONDS);
+  }
+
+  /**
+   * get ml-commons train, predict and trainandpredict result.
+   * @param inputDataFrame input data frame
+   * @param arguments ml parameters
+   * @param nodeClient node client
+   * @return ml-commons result
+   */
+  protected MLOutput getMLOutput(DataFrame inputDataFrame,
+                                 Map<String, Object> arguments,
+                                 NodeClient nodeClient) {
+    MLInput mlinput = MLInput.builder()
+            .inputDataset(new DataFrameInputDataset(inputDataFrame))
+            .build();
+
+    MachineLearningNodeClient machineLearningClient =
+            MLClient.getMLClient(nodeClient);
+
+    return machineLearningClient
+            .execute(mlinput, arguments)
+            .actionGet(30, TimeUnit.SECONDS);
+  }
+
+  /**
+   * iterate result and built it into ExprTupleValue.
+   * @param inputRowIter input row iterator
+   * @param inputDataFrame input data frame
+   * @param mlResult train/predict result
+   * @return result in ExprTupleValue format
+   */
+  protected ExprTupleValue buildPPLResult(boolean isPredict,
+                                       Iterator<Row> inputRowIter,
+                                       DataFrame inputDataFrame,
+                                       MLOutput mlResult) {
+    if (isPredict) {
+      Iterator<Row> resultRowIter = ((MLPredictionOutput)mlResult).getPredictionResult().iterator();
+      return buildResult(inputRowIter,
+              inputDataFrame,
+              (MLPredictionOutput) mlResult,
+              resultRowIter);
+    } else {
+      return buildTrainResult((MLTrainingOutput) mlResult);
+    }
+  }
+
+  protected ExprTupleValue buildTrainResult(MLTrainingOutput trainResult) {
+    ImmutableMap.Builder<String, ExprValue> resultBuilder = new ImmutableMap.Builder<>();
+    resultBuilder.put("model_id", new ExprStringValue(trainResult.getModelId()));
+    resultBuilder.put("task_id", new ExprStringValue(trainResult.getTaskId()));
+    resultBuilder.put("status", new ExprStringValue(trainResult.getStatus()));
+
+    return ExprTupleValue.fromExprValueMap(resultBuilder.build());
   }
 
 }

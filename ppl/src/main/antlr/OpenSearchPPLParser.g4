@@ -25,7 +25,7 @@ pplCommands
 
 commands
     : whereCommand | fieldsCommand | renameCommand | statsCommand | dedupCommand | sortCommand | evalCommand | headCommand
-    | topCommand | rareCommand | parseCommand | kmeansCommand | adCommand;
+    | topCommand | rareCommand | parseCommand | kmeansCommand | adCommand | mlCommand;
 
 searchCommand
     : (SEARCH)? fromClause                                          #searchFrom
@@ -124,6 +124,14 @@ adParameter
     | (TIME_ZONE EQUAL time_zone=stringLiteral)
     | (TRAINING_DATA_SIZE EQUAL training_data_size=integerLiteral)
     | (ANOMALY_SCORE_THRESHOLD EQUAL anomaly_score_threshold=decimalLiteral)
+    ;
+
+mlCommand
+    : ML (mlArg)*
+    ;
+
+mlArg
+    : (argName=ident EQUAL argValue=literalValue)
     ;
 
 /** clauses */

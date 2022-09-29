@@ -26,6 +26,7 @@ RARE:                               'RARE';
 PARSE:                              'PARSE';
 KMEANS:                             'KMEANS';
 AD:                                 'AD';
+ML:                                 'ML';
 
 // COMMAND ASSIST KEYWORDS
 AS:                                 'AS';
