@@ -11,11 +11,18 @@ import static org.opensearch.sql.ast.tree.Sort.NullOrder.NULL_LAST;
 import static org.opensearch.sql.ast.tree.Sort.SortOrder.ASC;
 import static org.opensearch.sql.ast.tree.Sort.SortOrder.DESC;
 import static org.opensearch.sql.data.type.ExprCoreType.STRUCT;
+import static org.opensearch.sql.utils.MLCommonsConstants.ACTION;
+import static org.opensearch.sql.utils.MLCommonsConstants.MODELID;
+import static org.opensearch.sql.utils.MLCommonsConstants.PREDICT;
 import static org.opensearch.sql.utils.MLCommonsConstants.RCF_ANOMALOUS;
 import static org.opensearch.sql.utils.MLCommonsConstants.RCF_ANOMALY_GRADE;
 import static org.opensearch.sql.utils.MLCommonsConstants.RCF_SCORE;
 import static org.opensearch.sql.utils.MLCommonsConstants.RCF_TIMESTAMP;
+import static org.opensearch.sql.utils.MLCommonsConstants.STATUS;
+import static org.opensearch.sql.utils.MLCommonsConstants.TASKID;
 import static org.opensearch.sql.utils.MLCommonsConstants.TIME_FIELD;
+import static org.opensearch.sql.utils.MLCommonsConstants.TRAIN;
+import static org.opensearch.sql.utils.MLCommonsConstants.TRAINANDPREDICT;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -466,16 +473,16 @@ public class Analyzer extends AbstractNodeVisitor<LogicalPlan, AnalysisContext> 
   }
 
   /**
-   * Build {@link LogicalML} for Kmeans command.
+   * Build {@link LogicalML} for ml command.
    */
   @Override
   public LogicalPlan visitML(ML node, AnalysisContext context) {
     LogicalPlan child = node.getChild().get(0).accept(this, context);
-    java.util.Map<String, Literal> options = node.getArguments();
     TypeEnvironment currentEnv = context.peek();
-    currentEnv.define(new Symbol(Namespace.FIELD_NAME, "ClusterID"), ExprCoreType.INTEGER);
+    node.getOutputSchema(currentEnv).entrySet().stream().
+            forEach(v -> currentEnv.define(new Symbol(Namespace.FIELD_NAME, v.getKey()), v.getValue()));
 
-    return new LogicalML(child, options);
+    return new LogicalML(child, node.getArguments());
   }
 
   /**

@@ -7,6 +7,9 @@
 package org.opensearch.sql.ast.tree;
 
 import com.google.common.collect.ImmutableList;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -15,8 +18,29 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.opensearch.sql.analysis.TypeEnvironment;
+import org.opensearch.sql.analysis.symbol.Namespace;
+import org.opensearch.sql.analysis.symbol.Symbol;
 import org.opensearch.sql.ast.AbstractNodeVisitor;
 import org.opensearch.sql.ast.expression.Literal;
+import org.opensearch.sql.data.type.ExprCoreType;
+
+import static org.opensearch.sql.utils.MLCommonsConstants.ACTION;
+import static org.opensearch.sql.utils.MLCommonsConstants.AD;
+import static org.opensearch.sql.utils.MLCommonsConstants.ALGO;
+import static org.opensearch.sql.utils.MLCommonsConstants.CLUSTERID;
+import static org.opensearch.sql.utils.MLCommonsConstants.KMEANS;
+import static org.opensearch.sql.utils.MLCommonsConstants.MODELID;
+import static org.opensearch.sql.utils.MLCommonsConstants.PREDICT;
+import static org.opensearch.sql.utils.MLCommonsConstants.RCF_ANOMALOUS;
+import static org.opensearch.sql.utils.MLCommonsConstants.RCF_ANOMALY_GRADE;
+import static org.opensearch.sql.utils.MLCommonsConstants.RCF_SCORE;
+import static org.opensearch.sql.utils.MLCommonsConstants.RCF_TIMESTAMP;
+import static org.opensearch.sql.utils.MLCommonsConstants.STATUS;
+import static org.opensearch.sql.utils.MLCommonsConstants.TASKID;
+import static org.opensearch.sql.utils.MLCommonsConstants.TIME_FIELD;
+import static org.opensearch.sql.utils.MLCommonsConstants.TRAIN;
+import static org.opensearch.sql.utils.MLCommonsConstants.TRAINANDPREDICT;
 
 @Getter
 @Setter
@@ -43,5 +67,52 @@ public class ML extends UnresolvedPlan {
   @Override
   public List<UnresolvedPlan> getChild() {
     return ImmutableList.of(this.child);
+  }
+
+  private String getAction() {
+    return  (String) arguments.get(ACTION).getValue();
+  }
+
+  public Map<String, ExprCoreType> getOutputSchema(TypeEnvironment env) {
+    switch (getAction()) {
+      case TRAIN:
+        env.clearAllFields();
+        return getTrainOutputSchema();
+      case PREDICT:
+      case TRAINANDPREDICT:
+        return getPredictOutputSchema();
+      default:
+        throw new IllegalArgumentException("Action error. Please indicate train, predict or trainandpredict.");
+    }
+  }
+
+  public Map<String, ExprCoreType> getPredictOutputSchema() {
+    HashMap<String, ExprCoreType> res = new HashMap<>();
+    String algo = arguments.containsKey(ALGO) ? (String) arguments.get(ALGO).getValue() : null;
+    switch (algo) {
+      case KMEANS:
+        res.put(CLUSTERID, ExprCoreType.INTEGER);
+        break;
+      case AD:
+        res.put(RCF_SCORE, ExprCoreType.DOUBLE);
+        if (arguments.containsKey(TIME_FIELD)) {
+          res.put(RCF_ANOMALY_GRADE, ExprCoreType.DOUBLE);
+          res.put(RCF_TIMESTAMP, ExprCoreType.TIMESTAMP);
+        } else {
+          res.put(RCF_ANOMALOUS, ExprCoreType.BOOLEAN);
+        }
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported algorithm: " + algo);
+    }
+    return res;
+  }
+
+  public Map<String, ExprCoreType> getTrainOutputSchema() {
+    return new HashMap<>() {{
+      put(MODELID, ExprCoreType.STRING);
+      put(TASKID, ExprCoreType.STRING);
+      put(STATUS, ExprCoreType.STRING);
+    }};
   }
 }

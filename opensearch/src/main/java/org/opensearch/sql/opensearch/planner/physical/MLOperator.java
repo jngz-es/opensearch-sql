@@ -5,6 +5,7 @@
 
 package org.opensearch.sql.opensearch.planner.physical;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,10 +51,18 @@ public class MLOperator extends MLCommonsOperatorActions {
     MLOutput mlOutput = getMLOutput(inputDataFrame, args, nodeClient);
     Iterator<Row> inputRowIter = inputDataFrame.iterator();
     final boolean isPrediction = ((String) args.get("action")).equals("train") ? false : true;
+    //For train, only one row to return.
+    Iterator<String> trainIter = new ArrayList<String>() {{
+      add("train");
+    }}.iterator();
     iterator = new Iterator<ExprValue>() {
       @Override
       public boolean hasNext() {
-        return inputRowIter.hasNext();
+        if (isPrediction) {
+          return inputRowIter.hasNext();
+        } else {
+          return trainIter.hasNext();
+        }
       }
 
       @Override
