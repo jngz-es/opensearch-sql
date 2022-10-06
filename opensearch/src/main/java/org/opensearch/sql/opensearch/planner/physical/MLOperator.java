@@ -52,9 +52,11 @@ public class MLOperator extends MLCommonsOperatorActions {
     Iterator<Row> inputRowIter = inputDataFrame.iterator();
     final boolean isPrediction = ((String) args.get("action")).equals("train") ? false : true;
     //For train, only one row to return.
-    Iterator<String> trainIter = new ArrayList<String>() {{
-      add("train");
-    }}.iterator();
+    Iterator<String> trainIter = new ArrayList<String>() {
+      {
+        add("train");
+      }
+    }.iterator();
     iterator = new Iterator<ExprValue>() {
       @Override
       public boolean hasNext() {

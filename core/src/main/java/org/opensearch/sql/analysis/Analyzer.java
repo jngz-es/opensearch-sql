@@ -479,8 +479,8 @@ public class Analyzer extends AbstractNodeVisitor<LogicalPlan, AnalysisContext> 
   public LogicalPlan visitML(ML node, AnalysisContext context) {
     LogicalPlan child = node.getChild().get(0).accept(this, context);
     TypeEnvironment currentEnv = context.peek();
-    node.getOutputSchema(currentEnv).entrySet().stream().
-            forEach(v -> currentEnv.define(new Symbol(Namespace.FIELD_NAME, v.getKey()), v.getValue()));
+    node.getOutputSchema(currentEnv).entrySet().stream()
+      .forEach(v -> currentEnv.define(new Symbol(Namespace.FIELD_NAME, v.getKey()), v.getValue()));
 
     return new LogicalML(child, node.getArguments());
   }

@@ -6,6 +6,8 @@
 
 package org.opensearch.sql.analysis;
 
+import static org.opensearch.sql.analysis.symbol.Namespace.FIELD_NAME;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -18,8 +20,6 @@ import org.opensearch.sql.exception.SemanticCheckException;
 import org.opensearch.sql.expression.Expression;
 import org.opensearch.sql.expression.ReferenceExpression;
 import org.opensearch.sql.expression.env.Environment;
-
-import static org.opensearch.sql.analysis.symbol.Namespace.FIELD_NAME;
 
 /**
  * The definition of Type Environment.
@@ -102,6 +102,7 @@ public class TypeEnvironment implements Environment<Symbol, ExprType> {
    * Clear all fields in the current environment.
    */
   public void clearAllFields() {
-    lookupAllFields(FIELD_NAME).keySet().stream().forEach(v -> remove(new Symbol(Namespace.FIELD_NAME, v)));
+    lookupAllFields(FIELD_NAME).keySet().stream()
+            .forEach(v -> remove(new Symbol(Namespace.FIELD_NAME, v)));
   }
 }

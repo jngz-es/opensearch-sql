@@ -6,25 +6,6 @@
 
 package org.opensearch.sql.ast.tree;
 
-import com.google.common.collect.ImmutableList;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.opensearch.sql.analysis.TypeEnvironment;
-import org.opensearch.sql.analysis.symbol.Namespace;
-import org.opensearch.sql.analysis.symbol.Symbol;
-import org.opensearch.sql.ast.AbstractNodeVisitor;
-import org.opensearch.sql.ast.expression.Literal;
-import org.opensearch.sql.data.type.ExprCoreType;
-
 import static org.opensearch.sql.utils.MLCommonsConstants.ACTION;
 import static org.opensearch.sql.utils.MLCommonsConstants.AD;
 import static org.opensearch.sql.utils.MLCommonsConstants.ALGO;
@@ -41,6 +22,23 @@ import static org.opensearch.sql.utils.MLCommonsConstants.TASKID;
 import static org.opensearch.sql.utils.MLCommonsConstants.TIME_FIELD;
 import static org.opensearch.sql.utils.MLCommonsConstants.TRAIN;
 import static org.opensearch.sql.utils.MLCommonsConstants.TRAINANDPREDICT;
+
+import com.google.common.collect.ImmutableList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.opensearch.sql.analysis.TypeEnvironment;
+import org.opensearch.sql.ast.AbstractNodeVisitor;
+import org.opensearch.sql.ast.expression.Literal;
+import org.opensearch.sql.data.type.ExprCoreType;
+import org.opensearch.sql.data.type.ExprType;
+import org.opensearch.sql.expression.Expression;
 
 @Getter
 @Setter
@@ -73,6 +71,12 @@ public class ML extends UnresolvedPlan {
     return  (String) arguments.get(ACTION).getValue();
   }
 
+  /**
+   * Generate the ml output schema.
+   *
+   * @param env the current environment
+   * @return the schema
+   */
   public Map<String, ExprCoreType> getOutputSchema(TypeEnvironment env) {
     switch (getAction()) {
       case TRAIN:
@@ -82,10 +86,16 @@ public class ML extends UnresolvedPlan {
       case TRAINANDPREDICT:
         return getPredictOutputSchema();
       default:
-        throw new IllegalArgumentException("Action error. Please indicate train, predict or trainandpredict.");
+        throw new IllegalArgumentException(
+                "Action error. Please indicate train, predict or trainandpredict.");
     }
   }
 
+  /**
+   * Generate the ml predict output schema.
+   *
+   * @return the schema
+   */
   public Map<String, ExprCoreType> getPredictOutputSchema() {
     HashMap<String, ExprCoreType> res = new HashMap<>();
     String algo = arguments.containsKey(ALGO) ? (String) arguments.get(ALGO).getValue() : null;
@@ -108,11 +118,16 @@ public class ML extends UnresolvedPlan {
     return res;
   }
 
+  /**
+   * Generate the ml train output schema.
+   *
+   * @return the schema
+   */
   public Map<String, ExprCoreType> getTrainOutputSchema() {
     return new HashMap<>() {{
-      put(MODELID, ExprCoreType.STRING);
-      put(TASKID, ExprCoreType.STRING);
-      put(STATUS, ExprCoreType.STRING);
-    }};
+        put(MODELID, ExprCoreType.STRING);
+        put(TASKID, ExprCoreType.STRING);
+        put(STATUS, ExprCoreType.STRING);
+        }};
   }
 }
