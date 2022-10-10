@@ -37,8 +37,6 @@ import org.opensearch.sql.analysis.TypeEnvironment;
 import org.opensearch.sql.ast.AbstractNodeVisitor;
 import org.opensearch.sql.ast.expression.Literal;
 import org.opensearch.sql.data.type.ExprCoreType;
-import org.opensearch.sql.data.type.ExprType;
-import org.opensearch.sql.expression.Expression;
 
 @Getter
 @Setter

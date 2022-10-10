@@ -365,7 +365,7 @@ public class AstBuilder extends OpenSearchPPLParserBaseVisitor<UnresolvedPlan> {
     ImmutableMap.Builder<String, Literal> builder = ImmutableMap.builder();
     ctx.mlArg()
             .forEach(x -> {
-              builder.put(x.argName.toString(),
+              builder.put(x.argName.getText(),
                       (Literal) internalVisitExpression(x.argValue));
             });
     return new ML(builder.build());

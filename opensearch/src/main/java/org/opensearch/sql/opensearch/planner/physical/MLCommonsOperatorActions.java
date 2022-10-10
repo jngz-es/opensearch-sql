@@ -6,6 +6,10 @@
 
 package org.opensearch.sql.opensearch.planner.physical;
 
+import static org.opensearch.sql.utils.MLCommonsConstants.MODELID;
+import static org.opensearch.sql.utils.MLCommonsConstants.STATUS;
+import static org.opensearch.sql.utils.MLCommonsConstants.TASKID;
+
 import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -236,9 +240,9 @@ public abstract class MLCommonsOperatorActions extends PhysicalPlan {
 
   protected ExprTupleValue buildTrainResult(MLTrainingOutput trainResult) {
     ImmutableMap.Builder<String, ExprValue> resultBuilder = new ImmutableMap.Builder<>();
-    resultBuilder.put("model_id", new ExprStringValue(trainResult.getModelId()));
-    resultBuilder.put("task_id", new ExprStringValue(trainResult.getTaskId()));
-    resultBuilder.put("status", new ExprStringValue(trainResult.getStatus()));
+    resultBuilder.put(MODELID, new ExprStringValue(trainResult.getModelId()));
+    resultBuilder.put(TASKID, new ExprStringValue(trainResult.getTaskId()));
+    resultBuilder.put(STATUS, new ExprStringValue(trainResult.getStatus()));
 
     return ExprTupleValue.fromExprValueMap(resultBuilder.build());
   }
