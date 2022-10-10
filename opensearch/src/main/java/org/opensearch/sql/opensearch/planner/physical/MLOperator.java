@@ -76,7 +76,7 @@ public class MLOperator extends MLCommonsOperatorActions {
 
   @Override
   public <R, C> R accept(PhysicalPlanNodeVisitor<R, C> visitor, C context) {
-    return visitor.visitMLCommons(this, context);
+    return visitor.visitML(this, context);
   }
 
   @Override
