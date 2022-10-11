@@ -63,7 +63,11 @@ public class MLOperator extends MLCommonsOperatorActions {
         if (isPrediction) {
           return inputRowIter.hasNext();
         } else {
-          return trainIter.hasNext();
+          boolean res = trainIter.hasNext();
+          if (res) {
+            trainIter.next();
+          }
+          return res;
         }
       }
 
