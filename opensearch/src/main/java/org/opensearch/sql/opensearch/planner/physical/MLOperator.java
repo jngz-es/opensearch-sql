@@ -18,6 +18,7 @@ import org.opensearch.client.node.NodeClient;
 import org.opensearch.ml.common.dataframe.DataFrame;
 import org.opensearch.ml.common.dataframe.Row;
 import org.opensearch.ml.common.output.MLOutput;
+import org.opensearch.ml.common.output.MLPredictionOutput;
 import org.opensearch.sql.ast.expression.Literal;
 import org.opensearch.sql.data.model.ExprValue;
 import org.opensearch.sql.planner.physical.PhysicalPlan;
@@ -49,14 +50,17 @@ public class MLOperator extends MLCommonsOperatorActions {
     Map<String, Object> args = processArgs(arguments);
 
     MLOutput mlOutput = getMLOutput(inputDataFrame, args, nodeClient);
-    Iterator<Row> inputRowIter = inputDataFrame.iterator();
+    final Iterator<Row> inputRowIter = inputDataFrame.iterator();
     final boolean isPrediction = ((String) args.get("action")).equals("train") ? false : true;
     //For train, only one row to return.
-    Iterator<String> trainIter = new ArrayList<String>() {
+    final Iterator<String> trainIter = new ArrayList<String>() {
       {
         add("train");
       }
     }.iterator();
+    final Iterator<Row> resultRowIter = isPrediction
+            ? ((MLPredictionOutput) mlOutput).getPredictionResult().iterator()
+            : null;
     iterator = new Iterator<ExprValue>() {
       @Override
       public boolean hasNext() {
@@ -73,7 +77,7 @@ public class MLOperator extends MLCommonsOperatorActions {
 
       @Override
       public ExprValue next() {
-        return buildPPLResult(isPrediction, inputRowIter, inputDataFrame, mlOutput);
+        return buildPPLResult(isPrediction, inputRowIter, inputDataFrame, mlOutput, resultRowIter);
       }
     };
   }

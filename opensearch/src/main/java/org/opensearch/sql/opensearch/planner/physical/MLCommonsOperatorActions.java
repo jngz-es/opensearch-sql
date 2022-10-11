@@ -226,14 +226,15 @@ public abstract class MLCommonsOperatorActions extends PhysicalPlan {
    * @param inputRowIter input row iterator
    * @param inputDataFrame input data frame
    * @param mlResult train/predict result
+   * @param resultRowIter predict result iterator
    * @return result in ExprTupleValue format
    */
   protected ExprTupleValue buildPPLResult(boolean isPredict,
                                        Iterator<Row> inputRowIter,
                                        DataFrame inputDataFrame,
-                                       MLOutput mlResult) {
+                                       MLOutput mlResult,
+                                       Iterator<Row> resultRowIter) {
     if (isPredict) {
-      Iterator<Row> resultRowIter = ((MLPredictionOutput)mlResult).getPredictionResult().iterator();
       return buildResult(inputRowIter,
               inputDataFrame,
               (MLPredictionOutput) mlResult,
