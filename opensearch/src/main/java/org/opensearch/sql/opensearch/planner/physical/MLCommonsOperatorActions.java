@@ -28,6 +28,7 @@ import org.opensearch.ml.common.dataframe.Row;
 import org.opensearch.ml.common.dataset.DataFrameInputDataset;
 import org.opensearch.ml.common.input.MLInput;
 import org.opensearch.ml.common.input.parameter.MLAlgoParams;
+import org.opensearch.ml.common.input.parameter.sample.SampleAlgoParams;
 import org.opensearch.ml.common.output.MLOutput;
 import org.opensearch.ml.common.output.MLPredictionOutput;
 import org.opensearch.ml.common.output.MLTrainingOutput;
@@ -206,6 +207,10 @@ public abstract class MLCommonsOperatorActions extends PhysicalPlan {
                                  NodeClient nodeClient) {
     MLInput mlinput = MLInput.builder()
             .inputDataset(new DataFrameInputDataset(inputDataFrame))
+            //Just the placeholders for algorithm and parameters which must be initialized.
+            //They will be overridden in ml client.
+            .algorithm(FunctionName.SAMPLE_ALGO)
+            .parameters(new SampleAlgoParams(0))
             .build();
 
     MachineLearningNodeClient machineLearningClient =
