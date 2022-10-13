@@ -29,6 +29,7 @@ public class MLCommonsConstants {
   public static final String TRAIN = "train";
   public static final String PREDICT = "predict";
   public static final String TRAINANDPREDICT = "trainandpredict";
+  public static final String ASYNC = "async";
   public static final String ALGO = "algorithm";
   public static final String KMEANS = "kmeans";
   public static final String CLUSTERID = "ClusterID";

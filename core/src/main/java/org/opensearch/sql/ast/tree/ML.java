@@ -10,6 +10,7 @@ import static org.opensearch.sql.utils.MLCommonsConstants.ACTION;
 import static org.opensearch.sql.utils.MLCommonsConstants.AD;
 import static org.opensearch.sql.utils.MLCommonsConstants.AD_TIME_FIELD;
 import static org.opensearch.sql.utils.MLCommonsConstants.ALGO;
+import static org.opensearch.sql.utils.MLCommonsConstants.ASYNC;
 import static org.opensearch.sql.utils.MLCommonsConstants.CLUSTERID;
 import static org.opensearch.sql.utils.MLCommonsConstants.KMEANS;
 import static org.opensearch.sql.utils.MLCommonsConstants.MODELID;
@@ -123,10 +124,14 @@ public class ML extends UnresolvedPlan {
    * @return the schema
    */
   public Map<String, ExprCoreType> getTrainOutputSchema() {
-    return new HashMap<>() {{
-        put(MODELID, ExprCoreType.STRING);
-        put(TASKID, ExprCoreType.STRING);
-        put(STATUS, ExprCoreType.STRING);
-        }};
+    boolean isAsync = arguments.containsKey(ASYNC)
+            ? (boolean) arguments.get(ASYNC).getValue() : false;
+    Map<String, ExprCoreType> res = new HashMap<>(Map.of(STATUS, ExprCoreType.STRING));
+    if (isAsync) {
+      res.put(TASKID, ExprCoreType.STRING);
+    } else {
+      res.put(MODELID, ExprCoreType.STRING);
+    }
+    return res;
   }
 }
