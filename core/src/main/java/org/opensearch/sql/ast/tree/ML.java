@@ -7,8 +7,8 @@
 package org.opensearch.sql.ast.tree;
 
 import static org.opensearch.sql.utils.MLCommonsConstants.ACTION;
-import static org.opensearch.sql.utils.MLCommonsConstants.AD;
-import static org.opensearch.sql.utils.MLCommonsConstants.AD_TIME_FIELD;
+import static org.opensearch.sql.utils.MLCommonsConstants.RCF;
+import static org.opensearch.sql.utils.MLCommonsConstants.RCF_TIME_FIELD;
 import static org.opensearch.sql.utils.MLCommonsConstants.ALGO;
 import static org.opensearch.sql.utils.MLCommonsConstants.ASYNC;
 import static org.opensearch.sql.utils.MLCommonsConstants.CLUSTERID;
@@ -18,10 +18,8 @@ import static org.opensearch.sql.utils.MLCommonsConstants.PREDICT;
 import static org.opensearch.sql.utils.MLCommonsConstants.RCF_ANOMALOUS;
 import static org.opensearch.sql.utils.MLCommonsConstants.RCF_ANOMALY_GRADE;
 import static org.opensearch.sql.utils.MLCommonsConstants.RCF_SCORE;
-import static org.opensearch.sql.utils.MLCommonsConstants.RCF_TIMESTAMP;
 import static org.opensearch.sql.utils.MLCommonsConstants.STATUS;
 import static org.opensearch.sql.utils.MLCommonsConstants.TASKID;
-import static org.opensearch.sql.utils.MLCommonsConstants.TIME_FIELD;
 import static org.opensearch.sql.utils.MLCommonsConstants.TRAIN;
 import static org.opensearch.sql.utils.MLCommonsConstants.TRAINANDPREDICT;
 
@@ -103,11 +101,11 @@ public class ML extends UnresolvedPlan {
       case KMEANS:
         res.put(CLUSTERID, ExprCoreType.INTEGER);
         break;
-      case AD:
+      case RCF:
         res.put(RCF_SCORE, ExprCoreType.DOUBLE);
-        if (arguments.containsKey(AD_TIME_FIELD)) {
+        if (arguments.containsKey(RCF_TIME_FIELD)) {
           res.put(RCF_ANOMALY_GRADE, ExprCoreType.DOUBLE);
-          res.put((String) arguments.get(AD_TIME_FIELD).getValue(), ExprCoreType.TIMESTAMP);
+          res.put((String) arguments.get(RCF_TIME_FIELD).getValue(), ExprCoreType.TIMESTAMP);
         } else {
           res.put(RCF_ANOMALOUS, ExprCoreType.BOOLEAN);
         }

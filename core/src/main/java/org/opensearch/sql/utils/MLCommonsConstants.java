@@ -33,8 +33,8 @@ public class MLCommonsConstants {
   public static final String ALGO = "algorithm";
   public static final String KMEANS = "kmeans";
   public static final String CLUSTERID = "ClusterID";
-  public static final String AD = "ad";
-  public static final String AD_TIME_FIELD = "timeField";
+  public static final String RCF = "rcf";
+  public static final String RCF_TIME_FIELD = "timeField";
   public static final String MODELID = "model_id";
   public static final String TASKID = "task_id";
   public static final String STATUS = "status";
