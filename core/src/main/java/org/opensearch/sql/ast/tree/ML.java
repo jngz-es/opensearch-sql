@@ -7,12 +7,12 @@
 package org.opensearch.sql.ast.tree;
 
 import static org.opensearch.sql.utils.MLCommonsConstants.ACTION;
-import static org.opensearch.sql.utils.MLCommonsConstants.LIR;
-import static org.opensearch.sql.utils.MLCommonsConstants.LIR_TARGET;
 import static org.opensearch.sql.utils.MLCommonsConstants.ALGO;
 import static org.opensearch.sql.utils.MLCommonsConstants.ASYNC;
 import static org.opensearch.sql.utils.MLCommonsConstants.CLUSTERID;
 import static org.opensearch.sql.utils.MLCommonsConstants.KMEANS;
+import static org.opensearch.sql.utils.MLCommonsConstants.LIR;
+import static org.opensearch.sql.utils.MLCommonsConstants.LIR_TARGET;
 import static org.opensearch.sql.utils.MLCommonsConstants.MODELID;
 import static org.opensearch.sql.utils.MLCommonsConstants.PREDICT;
 import static org.opensearch.sql.utils.MLCommonsConstants.RCF;
