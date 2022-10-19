@@ -7,6 +7,8 @@
 package org.opensearch.sql.ast.tree;
 
 import static org.opensearch.sql.utils.MLCommonsConstants.ACTION;
+import static org.opensearch.sql.utils.MLCommonsConstants.LIR;
+import static org.opensearch.sql.utils.MLCommonsConstants.LIR_TARGET;
 import static org.opensearch.sql.utils.MLCommonsConstants.RCF;
 import static org.opensearch.sql.utils.MLCommonsConstants.RCF_TIME_FIELD;
 import static org.opensearch.sql.utils.MLCommonsConstants.ALGO;
@@ -109,6 +111,11 @@ public class ML extends UnresolvedPlan {
         } else {
           res.put(RCF_ANOMALOUS, ExprCoreType.BOOLEAN);
         }
+        break;
+      case LIR:
+        String resField = arguments.containsKey(LIR_TARGET)
+                ? (String) arguments.get(LIR_TARGET).getValue() : "target";
+        res.put(resField, ExprCoreType.DOUBLE);
         break;
       default:
         throw new IllegalArgumentException("Unsupported algorithm: " + algo);

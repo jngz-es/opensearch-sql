@@ -38,4 +38,6 @@ public class MLCommonsConstants {
   public static final String MODELID = "model_id";
   public static final String TASKID = "task_id";
   public static final String STATUS = "status";
+  public static final String LIR = "linear_regression";
+  public static final String LIR_TARGET = "target";
 }
