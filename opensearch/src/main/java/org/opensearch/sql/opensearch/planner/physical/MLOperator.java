@@ -51,6 +51,7 @@ public class MLOperator extends MLCommonsOperatorActions {
 
     MLOutput mlOutput = getMLOutput(inputDataFrame, args, nodeClient);
     final Iterator<Row> inputRowIter = inputDataFrame.iterator();
+    // Only need to check train here, as action should be already checked in ml client.
     final boolean isPrediction = ((String) args.get("action")).equals("train") ? false : true;
     //For train, only one row to return.
     final Iterator<String> trainIter = new ArrayList<String>() {
