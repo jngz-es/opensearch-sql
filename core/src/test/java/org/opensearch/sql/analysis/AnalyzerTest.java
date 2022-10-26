@@ -836,9 +836,9 @@ class AnalyzerTest extends AnalyzerTestBase {
   @Test
   public void ml_relation_unsupported_algorithm() {
     Map<String, Literal> argumentMap = new HashMap<>() {{
-      put(ACTION, new Literal(PREDICT, DataType.STRING));
-      put(ALGO, new Literal("unsupported", DataType.STRING));
-    }};
+        put(ACTION, new Literal(PREDICT, DataType.STRING));
+        put(ALGO, new Literal("unsupported", DataType.STRING));
+      }};
 
     IllegalArgumentException exception =
             assertThrows(
@@ -853,9 +853,9 @@ class AnalyzerTest extends AnalyzerTestBase {
   @Test
   public void ml_relation_train_sync() {
     Map<String, Literal> argumentMap = new HashMap<>() {{
-      put(ACTION, new Literal(TRAIN, DataType.STRING));
-      put(ALGO, new Literal(KMEANS, DataType.STRING));
-    }};
+        put(ACTION, new Literal(TRAIN, DataType.STRING));
+        put(ALGO, new Literal(KMEANS, DataType.STRING));
+      }};
 
     LogicalPlan actual = analyze(AstDSL.project(
             new ML(AstDSL.relation("schema"), argumentMap), AstDSL.allFields()));
@@ -950,9 +950,9 @@ class AnalyzerTest extends AnalyzerTestBase {
   @Test
   public void ml_relation_predict_linear_regression_without_target() {
     Map<String, Literal> argumentMap = new HashMap<>() {{
-      put(ACTION, new Literal(PREDICT, DataType.STRING));
-      put(ALGO, new Literal(LIR, DataType.STRING));
-    }};
+        put(ACTION, new Literal(PREDICT, DataType.STRING));
+        put(ALGO, new Literal(LIR, DataType.STRING));
+      }};
 
     LogicalPlan actual = analyze(AstDSL.project(
             new ML(AstDSL.relation("schema"), argumentMap), AstDSL.allFields()));

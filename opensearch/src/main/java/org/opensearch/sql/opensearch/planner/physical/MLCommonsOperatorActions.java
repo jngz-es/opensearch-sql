@@ -217,7 +217,7 @@ public abstract class MLCommonsOperatorActions extends PhysicalPlan {
             MLClient.getMLClient(nodeClient);
 
     return machineLearningClient
-            .execute(mlinput, arguments)
+            .run(mlinput, arguments)
             .actionGet(30, TimeUnit.SECONDS);
   }
 

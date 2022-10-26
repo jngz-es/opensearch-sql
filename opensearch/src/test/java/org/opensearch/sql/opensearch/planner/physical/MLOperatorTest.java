@@ -5,7 +5,25 @@
 
 package org.opensearch.sql.opensearch.planner.physical;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.opensearch.sql.utils.MLCommonsConstants.ACTION;
+import static org.opensearch.sql.utils.MLCommonsConstants.ALGO;
+import static org.opensearch.sql.utils.MLCommonsConstants.KMEANS;
+import static org.opensearch.sql.utils.MLCommonsConstants.PREDICT;
+import static org.opensearch.sql.utils.MLCommonsConstants.TRAIN;
+
 import com.google.common.collect.ImmutableMap;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
@@ -34,25 +52,6 @@ import org.opensearch.sql.data.model.ExprValue;
 import org.opensearch.sql.opensearch.client.MLClient;
 import org.opensearch.sql.planner.physical.PhysicalPlan;
 import org.opensearch.sql.planner.physical.PhysicalPlanNodeVisitor;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.opensearch.sql.utils.MLCommonsConstants.ACTION;
-import static org.opensearch.sql.utils.MLCommonsConstants.ALGO;
-import static org.opensearch.sql.utils.MLCommonsConstants.KMEANS;
-import static org.opensearch.sql.utils.MLCommonsConstants.PREDICT;
-import static org.opensearch.sql.utils.MLCommonsConstants.TRAIN;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -117,7 +116,7 @@ public class MLOperatorTest {
 
     when(actionFuture.actionGet(anyLong(), eq(TimeUnit.SECONDS)))
             .thenReturn(mlOutput);
-    when(machineLearningNodeClient.execute(any(MLInput.class), any()))
+    when(machineLearningNodeClient.run(any(MLInput.class), any()))
             .thenReturn(actionFuture);
   }
 
@@ -137,7 +136,7 @@ public class MLOperatorTest {
   @Test
   public void testOpenPredict() {
     setUpPredict();
-    try(MockedStatic<MLClient> mlClientMockedStatic = Mockito.mockStatic(MLClient.class)) {
+    try (MockedStatic<MLClient> mlClientMockedStatic = Mockito.mockStatic(MLClient.class)) {
       when(MLClient.getMLClient(any(NodeClient.class))).thenReturn(machineLearningNodeClient);
       mlOperator.open();
       assertTrue(mlOperator.hasNext());
@@ -149,7 +148,7 @@ public class MLOperatorTest {
   @Test
   public void testOpenTrain() {
     setUpTrain();
-    try(MockedStatic<MLClient> mlClientMockedStatic = Mockito.mockStatic(MLClient.class)) {
+    try (MockedStatic<MLClient> mlClientMockedStatic = Mockito.mockStatic(MLClient.class)) {
       when(MLClient.getMLClient(any(NodeClient.class))).thenReturn(machineLearningNodeClient);
       mlOperator.open();
       assertTrue(mlOperator.hasNext());
@@ -161,11 +160,10 @@ public class MLOperatorTest {
   @Test
   public void testAccept() {
     setUpPredict();
-    try(MockedStatic<MLClient> mlClientMockedStatic = Mockito.mockStatic(MLClient.class)) {
+    try (MockedStatic<MLClient> mlClientMockedStatic = Mockito.mockStatic(MLClient.class)) {
       when(MLClient.getMLClient(any(NodeClient.class))).thenReturn(machineLearningNodeClient);
       PhysicalPlanNodeVisitor physicalPlanNodeVisitor
-              = new PhysicalPlanNodeVisitor<Integer, Object>() {
-      };
+              = new PhysicalPlanNodeVisitor<Integer, Object>() {};
       assertNull(mlOperator.accept(physicalPlanNodeVisitor, null));
     }
   }
